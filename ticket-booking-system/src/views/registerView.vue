@@ -32,7 +32,7 @@ export default {
         register() {
             console.log(this.email);
             console.log(this.password);
-            axios.post('http://127.0.0.1:5000/test', {
+            axios.post('http://127.0.0.1:5000/api/auth/register', {
                 email: this.email,
                 password: this.password
             }).then(response => {

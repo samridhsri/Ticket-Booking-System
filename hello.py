@@ -1,12 +1,18 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import sqlite3
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 
 DEBUG = True
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['JWT_SECRET_KEY'] = 'abcdefgh'  # Change this to a secure secret key
+jwt = JWTManager(app)
+CORS(app)
 
 def connect_db():
     try:
@@ -22,14 +28,62 @@ def connect_db():
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/test', methods=['GET','POST'])
+@app.route('/api/auth/register', methods=['GET','POST'])
 def register():
     data = request.get_json()
     print(data)
     print(data['email'])
     print(data['password'])
-    conn = connect_db()
-    conn.execute("INSERT INTO userDetails (email, password) VALUES ('{}', '{}')".format(data['email'], data['password']))
-    conn.commit()
-    print("Data inserted successfully")
-    return 'hello'
+    try:
+        conn = connect_db()
+        conn.execute("INSERT INTO userDetails (email, password) VALUES ('{}', '{}')".format(data['email'], data['password']))
+        conn.commit()
+        return jsonify({"message": "success"})
+    except:
+        return jsonify({"message": "error"})
+    
+
+@app.route('/api/auth/login', methods=['GET','POST'])
+def login():
+    data = request.get_json()
+    print(data)
+    print(data['email'])
+    print(data['password'])
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM userDetails WHERE email = '{}' AND password = '{}'".format(data['email'], data['password']))
+        rows = cursor.fetchall()
+        if(len(rows) == 1):
+            access_token = create_access_token(identity=data['email'])
+            return jsonify({"message": "success",
+                            "access_token": access_token})
+        else:
+            return jsonify({"message": "error"})
+    except:
+        return jsonify({"message": "error"})
+
+@app.route('/api/all-details', methods=['GET','POST'])
+def venueAndShowDetails():
+    try:
+        conn = connect_db()
+        cursor = conn.execute('SELECT * FROM venueDetails')
+        rows1 = cursor.fetchall()
+        print(rows1)
+        cursor = conn.execute('SELECT * FROM showDetails')
+        rows2 = cursor.fetchall()
+        print(rows2)
+        return jsonify({"venueList": rows1,
+                        "showList": rows2})
+    except:
+        return jsonify({'message': 'There was an error'})
+
+
+    
+
+# @app.route('/api/auth/protected', methods=['GET','POST'])
+# @jwt_required
+# def protected():
+#     current_user = get_jwt_identity()
+#     return jsonify({"message": "success",
+#                     "current_user": current_user})
+    

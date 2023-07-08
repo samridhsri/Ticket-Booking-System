@@ -1,20 +1,21 @@
 <template>
   <div class="home">
-    <router-link to="/login">Login</router-link>
-    <router-link to="/register">Register</router-link>
 
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+
+    <h1>You are here means you are verified</h1>
+    <UserDashboard/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+
+import UserDashboard from '@/components/UserDashboard.vue';
 
 export default {
   name: 'HomeView',
   components: {
-    HelloWorld
+    UserDashboard
   }
 }
 </script>
