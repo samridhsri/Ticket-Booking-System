@@ -1,19 +1,16 @@
+
 <template>
     <div>
-        <h1>Register/Login</h1>
+        <h1>Admin Login</h1>
         <p>
             <label>Email</label>
-            <input class="input" placeholder="email" v-model="email" type="text">
+            <input class="input" v-model="email" type="email">
         </p>
         <p>
             <label>password</label>
-            <input class="input" placeholder="password" v-model="password" type="password">
+            <input v-model="password" type="password">
         </p>
-        <button class="button btn-primary btn is-primary" @click="register()">Register</button>
-        <button class="button btn-primary btn is-primary" @click="login()">Login</button>
-
-        {{ email }}
-        {{ password }}
+        <button class="button btn-primary btn is-primary" @click="adminlogin()">Login</button>
 
 
     </div>
@@ -30,20 +27,8 @@ export default {
         };
     },
     methods: {
-        register() {
-            console.log(this.email);
-            console.log(this.password);
-            axios.post('http://127.0.0.1:5000/api/auth/register', {
-                email: this.email,
-                password: this.password
-            }).then(response => {
-                console.log(response.data);
-            }).catch(error => {
-                console.log(error);
-            })
-        },
-        login() {
-            axios.post('http://127.0.0.1:5000/api/auth/login', {
+        adminlogin() {
+            axios.post('http://127.0.0.1:5000/api/auth/admin-login', {
                 email: this.email,
                 password: this.password
             }).then(response => {
@@ -53,7 +38,7 @@ export default {
                     const token = response.data.access_token;
                     // const headers = { Authorization: `Bearer ${token}` };
                     localStorage.setItem('token', token);
-                    this.$router.push('/home/');
+                    this.$router.push('/adminDashboard/');
                 }
                 else{
                     alert('Invalid Credentials');
@@ -65,4 +50,8 @@ export default {
         }
     }
 }
+
 </script>
+
+<style></style>
+

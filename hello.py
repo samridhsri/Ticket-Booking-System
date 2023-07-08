@@ -41,7 +41,25 @@ def register():
         return jsonify({"message": "success"})
     except:
         return jsonify({"message": "error"})
-    
+
+@app.route('/api/auth/admin-login', methods=['GET','POST'])
+def adminlogin():
+    data = request.get_json()
+    print(data)
+    print(data['email'])
+    print(data['password'])
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM adminDetails WHERE email = '{}' AND password = '{}'".format(data['email'], data['password']))
+        rows = cursor.fetchall()
+        if(len(rows) == 1):
+            access_token = create_access_token(identity=data['email'])
+            return jsonify({"message": "success",
+                            "access_token": access_token})
+        else:
+            return jsonify({"message": "error"})
+    except:
+        return jsonify({"message": "error"})
 
 @app.route('/api/auth/login', methods=['GET','POST'])
 def login():
