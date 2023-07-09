@@ -4,6 +4,8 @@ import HomeView from '../views/HomeView.vue'
 import adminloginView from '../views/adminloginView.vue'
 import loginView from '../views/loginView.vue'
 import introView from '../views/introView.vue'
+import adminDashboardView from '../views/adminDashboardView.vue'
+import createVenue from '../components/createVenue.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +41,16 @@ const routes = [
     path: '/login',
     name: 'login',
     component: loginView
+  },
+  {
+    path: '/adminDashboard',
+    name: 'adminDashboard',
+    component: adminDashboardView
+  },
+  {
+    path: '/createVenue',
+    name: 'createVenue',
+    component: createVenue
   }
 ]
 

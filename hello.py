@@ -95,8 +95,22 @@ def venueAndShowDetails():
     except:
         return jsonify({'message': 'There was an error'})
 
+@app.route('/api/createVenue', methods=['GET','POST'])
+def createVenue():
+    data = request.get_json()
+    print(data)
+    print(data['name'])
+    print(data['place'])
+    print(data['location'])
+    print(data['capacity'])
 
-    
+    try:
+        conn = connect_db()
+        conn.execute("INSERT INTO venueDetails (venueName, place, location, capacity) VALUES ('{}', '{}', '{}', '{}')".format(data['name'], data['place'], data['location'], data['capacity']))
+        conn.commit()
+        return jsonify({"message": "success"})
+    except:
+        return jsonify({"message": "error"})
 
 # @app.route('/api/auth/protected', methods=['GET','POST'])
 # @jwt_required
