@@ -42,12 +42,6 @@ export default {
     },
     methods: {
         createShow() {
-            console.log(this.name);
-            console.log(this.rating);
-            console.log(this.time);
-            console.log(this.tags);
-            console.log(this.price);
-            console.log(this.venuename);
             axios.post('http://127.0.0.1:5000/api/createshow', {
                 name: this.name,
                 rating: parseInt(this.rating),
@@ -57,6 +51,7 @@ export default {
                 venuename: this.venuename
             }).then(response=> {
                 console.log(response.data);
+                this.$router.push({ name: 'adminDashboard' })
             }).catch(error => {
                 console.log(error);
             })

@@ -14,8 +14,8 @@
                                 <h6 class="card-subtitle mb-2 text-body-secondary">time: {{ show[3] }}</h6>
                             </div>
 
-                            <button type="button" class="btn btn-primary mt-3 mx-2">Edit</button>
-                            <button type="button" class="btn btn-primary mt-3 mx-2">Delete</button>
+                            <button type="button" class="btn btn-primary mt-3 mx-2" @click="editShow(show[1])">Edit</button>
+                            <button type="button" class="btn btn-primary mt-3 mx-2" @click="deleteShow(show[1])">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -40,6 +40,20 @@ export default {
     },
     methods: {
         //Methods
+        editShow(showname) {
+            this.$router.push({ name: 'editShow', params: { showname: showname } })
+        },
+
+        deleteShow(showname) {
+            axios.post('http://127.0.0.1:5000/api/deleteShow', {
+                showname: showname
+            }).then(response => {
+                console.log(response.data);
+                this.$router.go()
+            }).catch(error => {
+                console.log(error);
+            })
+        },
 
         createVenue() {
             this.$router.push({ name: 'createVenue' })

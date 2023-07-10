@@ -139,6 +139,49 @@ def createShow():
     except:
         return jsonify({"message": "error"})
 
+@app.route('/api/editShowDetails', methods=['GET','POST'])
+def editShowDetails():
+    data = request.get_json()
+    print(data)
+    try:
+        conn = connect_db()
+        query = "UPDATE showDetails SET rating = ?, time = ?, tags = ?, price = ?, venueName = ? WHERE showName = ?"
+        parameters = (data['rating'], data['time'], data['tags'], data['price'], data['venuename'], data['showname'])
+        print(parameters)
+        conn.execute(query, parameters)
+        conn.commit()
+        return jsonify({"message": "success"})
+    except:
+        return jsonify({"message": "error"})
+
+@app.route('/api/deleteShow', methods=['GET','POST'])
+def deleteShow():
+    data = request.get_json()
+    try:
+        conn = connect_db()
+        conn.execute("DELETE FROM showDetails WHERE showName = ?", (data['showname'],))
+        conn.commit()
+        return jsonify({"message": "success"})
+    except:
+        return jsonify({"message": "error"})
+
+
+
+@app.route('/api/showDetails', methods=['GET','POST'])
+def showDetails():
+    data = request.get_json()
+    print(data)
+    print(data['showname'])
+    showName = data['showname']
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM showDetails WHERE showName = ?", (showName,))
+        rows = cursor.fetchall()
+        print(rows)
+        return jsonify({"showDetails": rows})
+    except:
+        return jsonify({"message": "error"})
+
 # @app.route('/api/auth/protected', methods=['GET','POST'])
 # @jwt_required
 # def protected():
