@@ -6,6 +6,7 @@ import loginView from '../views/loginView.vue'
 import introView from '../views/introView.vue'
 import adminDashboardView from '../views/adminDashboardView.vue'
 import createVenue from '../components/createVenue.vue'
+import createShow from '../components/createShow.vue'
 
 Vue.use(VueRouter)
 
@@ -51,6 +52,11 @@ const routes = [
     path: '/createVenue',
     name: 'createVenue',
     component: createVenue
+  },
+  {
+    path: '/createShow/:venuename',
+    name: 'createShow',
+    component: createShow
   }
 ]
 

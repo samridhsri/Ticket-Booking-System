@@ -90,8 +90,22 @@ def venueAndShowDetails():
         cursor = conn.execute('SELECT * FROM showDetails')
         rows2 = cursor.fetchall()
         print(rows2)
+        cursor = conn.execute("SELECT venueName FROM venueDetails")
+        venueNames = cursor.fetchall()
+        result_VenueAndShow = {}
+        for venue in venueNames:
+            print(venue[0])
+            venue_name = venue[0]
+            cursor = conn.execute("SELECT * FROM showDetails WHERE venueName = ?", (venue_name,))
+            showName = cursor.fetchall()
+            if(result_VenueAndShow.get(venue_name) == None):
+                result_VenueAndShow[venue_name] = []
+            for row in showName:
+                result_VenueAndShow[venue_name].append(row)
+
         return jsonify({"venueList": rows1,
-                        "showList": rows2})
+                        "showList": rows2,
+                        "venueAndShow": result_VenueAndShow})
     except:
         return jsonify({'message': 'There was an error'})
 
@@ -107,6 +121,19 @@ def createVenue():
     try:
         conn = connect_db()
         conn.execute("INSERT INTO venueDetails (venueName, place, location, capacity) VALUES ('{}', '{}', '{}', '{}')".format(data['name'], data['place'], data['location'], data['capacity']))
+        conn.commit()
+        return jsonify({"message": "success"})
+    except:
+        return jsonify({"message": "error"})
+
+@app.route('/api/createshow', methods=['GET','POST'])
+def createShow():
+    data = request.get_json()
+    print(data)
+
+    try:
+        conn = connect_db()
+        conn.execute("INSERT INTO showDetails (showName, rating, time, tags, price, venueName) VALUES ('{}', '{}', '{}', '{}', '{}', '{}')".format(data['name'], data['rating'], data['time'], data['tags'], data['price'], data['venuename']))
         conn.commit()
         return jsonify({"message": "success"})
     except:

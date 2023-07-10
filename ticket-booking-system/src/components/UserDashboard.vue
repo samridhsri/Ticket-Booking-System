@@ -4,7 +4,7 @@
     <div class="container border p-5" v-for="venue in venues">
         <h1 class="">{{ venue[1] }}</h1>
         <div class="row col-lg-12 px-5 mx-auto mb-4">
-        <div class="card" style="width: 18rem;" v-for="show in shows">
+        <div class="card" style="width: 18rem;" v-for="show in venueAndShows[venue[1]]">
             <div class="card-body">
                 <div class="">
                     <h5 class="card-title">{{ show[1] }}</h5>
@@ -30,7 +30,8 @@ export default {
                 name: 'User',
                 email: ''},
             venues: ['Venue 1', 'Venue 2', 'Venue 3'],
-            shows: ['Show 1', 'Show 2', 'Show 3']
+            shows: ['Show 1', 'Show 2', 'Show 3'],
+            venueAndShows: {}
         }
     },
     methods: {
@@ -42,6 +43,7 @@ export default {
         console.log(response.data);
         this.venues = response.data.venueList;
         this.shows = response.data.showList;
+        this.venueAndShows = response.data.venueAndShow;
       })
       .catch(error => {
         console.log(error);
