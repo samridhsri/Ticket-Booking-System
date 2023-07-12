@@ -18,6 +18,11 @@ const routes = [
     component: introView
   },
   {
+    path: '/intro',
+    name: 'intro',
+    component: introView
+  },
+  {
     path: '/home',
     name: 'home',
     component: HomeView,

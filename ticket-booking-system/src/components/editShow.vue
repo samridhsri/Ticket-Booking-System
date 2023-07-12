@@ -71,13 +71,6 @@ export default {
             this.tags = response.data.showDetails[0][4];
             this.price = response.data.showDetails[0][5];
             this.venuename = response.data.showDetails[0][6];
-
-            console.log(this.name);
-            console.log(this.rating);
-            console.log(this.time);
-            console.log(this.tags);
-            console.log(this.price);
-            console.log(this.venuename);
             
         }).catch(error => {
             console.log(error);
