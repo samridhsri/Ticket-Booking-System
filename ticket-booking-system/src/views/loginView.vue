@@ -5,11 +5,11 @@
         <h1 class="display-4">Register/Login</h1>
         <div class="input-div">
             <p class="label-text">Enter your email-id here</p>
-            <input class="input input-box" placeholder="email" v-model="email" type="text">
+            <input class="input input-text-custom input-box rounded-5 text-center" placeholder="name@example.com" v-model="email" type="email">
         </div>
         <div class="input-div">
             <p class="label-text">Enter your password here</p>
-            <input class="input input-box" placeholder="password" v-model="password" type="password">
+            <input class="input input-text-custom input-box rounded-5 text-center" placeholder="password" v-model="password" type="password">
         </div>
         <div class="mt-4">
         <button class="button btn-danger btn-lg btn mx-5" @click="register()">Register</button>
@@ -65,7 +65,16 @@
     width: 22rem;
     border-color: rgba(50, 6, 90, 1);
 }
+.label-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400 !important;
+    letter-spacing: -1px;
+}
 
+.input-text-custom {
+    font-family: 'Poppins', sans-serif;
+}
 </style>
 
 <script>
