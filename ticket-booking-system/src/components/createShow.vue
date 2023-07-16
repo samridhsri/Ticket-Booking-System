@@ -18,8 +18,9 @@
             </div>
 
             <button class="btn btn-primary mt-3" @click="createShow()">Save</button>
+            {{ showcapacity }}
 
-            
+
         </div>
     </div>
 </template>
@@ -36,7 +37,8 @@ export default {
             time: '',
             tags: '',
             price: '',
-            venuename: this.$route.params.venuename
+            venuename: this.$route.params.venuename,
+            showcapacity: 0
         }
 
     },
@@ -48,19 +50,30 @@ export default {
                 time: this.time,
                 tags: this.tags,
                 price: parseInt(this.price),
-                venuename: this.venuename
-            }).then(response=> {
+                venuename: this.venuename,
+                showcapacity: this.showcapacity
+            }).then(response => {
                 console.log(response.data);
                 this.$router.push({ name: 'adminDashboard' })
             }).catch(error => {
                 console.log(error);
             })
 
-    },
-    created() {
-        
+        },
+        created() {
+
+            axios.post('http://127.0.0.1:5000/api/getvenuecapacity', {
+                venuename: this.venuename
+            }).then(response => {
+                console.log(response.data);
+                this.showcapacity = response.data.showcapacity;
+            }).catch(error => {
+                console.log(error);
+            })
+        }
     }
 }
-}
+
+
 
 </script>

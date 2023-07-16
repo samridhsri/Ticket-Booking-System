@@ -8,6 +8,7 @@ import adminDashboardView from '../views/adminDashboardView.vue'
 import createVenue from '../components/createVenue.vue'
 import createShow from '../components/createShow.vue'
 import editShow from '../components/editShow.vue'
+import bookTicket from '../components/bookTicket.vue'
 
 Vue.use(VueRouter)
 
@@ -68,6 +69,11 @@ const routes = [
     path: '/editShow/:showname',
     name: 'editShow',
     component: editShow
+  },
+  {
+    path: '/bookTicket/:username/:venuename/:showname',
+    name: 'bookTicket',
+    component: bookTicket
   }
 ]
 

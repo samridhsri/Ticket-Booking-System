@@ -1,7 +1,7 @@
 <template>
     <div>
     <h1>Welcome</h1>
-    <div class="container border p-5" v-for="venue in venues">
+    <div class="container p-5 m-5 h-auto border border-5 " v-for="venue in venues">
         <h1 class="">{{ venue[1] }}</h1>
         <div class="row col-lg-12 px-5 mx-auto mb-4">
         <div class="card" style="width: 18rem;" v-for="show in venueAndShows[venue[1]]">
@@ -11,7 +11,7 @@
                     <h6 class="card-subtitle mb-2 text-body-secondary">time: {{show[3]}}</h6>
                 </div>
 
-                <button type="button" class="btn btn-primary mt-3">Book Ticket</button>
+                <button type="button" class="btn btn-primary mt-3" @click="bookTicket(show[1],venue[1],'Samridh')">Book Ticket</button>
             </div>
         </div>
     </div>
@@ -35,6 +35,11 @@ export default {
         }
     },
     methods: {
+        bookTicket(showname, venuename, username){
+            console.log('book ticket');
+            this.$router.push({name: 'bookTicket',params: { username: username, venuename: venuename, showname: showname }});
+            
+        }
         
     },
     created(){

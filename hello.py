@@ -126,6 +126,20 @@ def createVenue():
     except:
         return jsonify({"message": "error"})
 
+@app.route('/api/getvenuecapacity', methods=['GET','POST'])
+def getVenueCapacity():
+    data = request.get_json()
+    print(data)
+
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT capacity FROM venueDetails WHERE venueName = '{}'".format(data))
+        capacity = cursor.fetchall()
+        print(capacity)
+        return jsonify({"capacity": capacity[0][0]})
+    except:
+        return jsonify({"message": "error"})
+
 @app.route('/api/createshow', methods=['GET','POST'])
 def createShow():
     data = request.get_json()
@@ -133,7 +147,7 @@ def createShow():
 
     try:
         conn = connect_db()
-        conn.execute("INSERT INTO showDetails (showName, rating, time, tags, price, venueName) VALUES ('{}', '{}', '{}', '{}', '{}', '{}')".format(data['name'], data['rating'], data['time'], data['tags'], data['price'], data['venuename']))
+        conn.execute("INSERT INTO showDetails (showName, rating, time, tags, price, venueName, showCapacity) VALUES ('{}', '{}', '{}', '{}', '{}', '{}','{}')".format(data['name'], data['rating'], data['time'], data['tags'], data['price'], data['venuename'], data['showcapacity']))
         conn.commit()
         return jsonify({"message": "success"})
     except:
@@ -182,10 +196,12 @@ def showDetails():
     except:
         return jsonify({"message": "error"})
 
+
+    data = request.get_json()
 # @app.route('/api/auth/protected', methods=['GET','POST'])
 # @jwt_required
 # def protected():
 #     current_user = get_jwt_identity()
 #     return jsonify({"message": "success",
 #                     "current_user": current_user})
-    
+
