@@ -4,8 +4,10 @@
 
         <div class="container">
             <h1>Hello Admin</h1>
-            <div class="container border p-5" v-for="venue in venues">
+            <div class="container border border-bottom-5 venue-container " v-for="venue in venues">
+                <div class="">
                 <h1 class="">{{ venue[1] }}</h1>
+            </div>
                 <div class="row col-lg-12 px-5 mx-auto mb-4">
                     <div class="card" style="width: 18rem;" v-for="show in venueAndShows[venue[1]]">
                         <div class="card-body">
@@ -19,12 +21,22 @@
                         </div>
                     </div>
                 </div>
-                <button @click="createShow(venue[1])">Add Shows</button>
+                <button class="btn btn-primary" @click="createShow(venue[1], venue[4])">Add Shows</button>
             </div>
             <button class="btn btn-primary text-center my-auto mt-5" v-if="!venueListIsEmpty()" @click="createVenue()">+</button>
         </div>
     </div>
 </template>
+
+<style>
+.venue-container {
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    background-color: #f2f2f2;
+    height: 150%;
+}
+</style>
 
 <script>
 import axios from 'axios';
@@ -61,8 +73,9 @@ export default {
         venueListIsEmpty() {
             return this.venues.length == 0;
         },
-        createShow(venueName) {
-            this.$router.push({ name: 'createShow', params: { venuename: venueName } })
+        createShow(venueName, venuecapacity) {
+            this.$router.push({ name: 'createShow', params: { venuename: venueName,
+            venuecapacity: venuecapacity } })
         }
     },
     created() {

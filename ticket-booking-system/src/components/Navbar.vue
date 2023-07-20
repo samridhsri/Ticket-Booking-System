@@ -24,7 +24,7 @@
           
           <div class="ml-auto">
             <uL>
-              <li class="nav-item mt-1">
+              <li class="nav-item mt-1 list-unstyled ">
             <button class="button btn-primary btn" v-if="checkLogin()" @click=logout()>Logout</button>
               </li>
             </uL>

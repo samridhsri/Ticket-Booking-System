@@ -38,7 +38,7 @@ export default {
             tags: '',
             price: '',
             venuename: this.$route.params.venuename,
-            showcapacity: 0
+            showcapacity: this.$route.params.venuecapacity,
         }
 
     },
@@ -54,7 +54,7 @@ export default {
                 showcapacity: this.showcapacity
             }).then(response => {
                 console.log(response.data);
-                this.$router.push({ name: 'adminDashboard' })
+                // this.$router.push({ name: 'adminDashboard' })    
             }).catch(error => {
                 console.log(error);
             })
@@ -65,6 +65,7 @@ export default {
             axios.post('http://127.0.0.1:5000/api/getvenuecapacity', {
                 venuename: this.venuename
             }).then(response => {
+                console.log("This is for the capacity")
                 console.log(response.data);
                 this.showcapacity = response.data.showcapacity;
             }).catch(error => {

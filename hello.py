@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+import traceback
 
 
 DEBUG = True
@@ -74,7 +75,8 @@ def login():
         if(len(rows) == 1):
             access_token = create_access_token(identity=data['email'])
             return jsonify({"message": "success",
-                            "access_token": access_token})
+                            "access_token": access_token,
+                            "email": data['email']})
         else:
             return jsonify({"message": "error"})
     except:
@@ -196,8 +198,61 @@ def showDetails():
     except:
         return jsonify({"message": "error"})
 
-
+@app.route('/api/bookticket', methods=['GET', 'POST'])
+def bookTicket():
     data = request.get_json()
+    print(data)
+
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT time, showCapacity FROM showDetails WHERE showName = ?", (data['showName'],))
+        showTiming = cursor.fetchall()
+        print(showTiming[0][0])
+        showtiming = showTiming[0][0]
+        showCapacity = showTiming[0][1]
+        if(int(data['numberOfSeats']) > int(showCapacity)):
+            return jsonify({"message": "error", "error_details": "Number of seats requested is more than the show capacity"})
+        conn.execute("INSERT INTO userBookingDetails (username, showName, venueName, numberOfTickets, totalPrice, showTiming) VALUES ('{}', '{}', '{}', '{}', '{}', '{}')".format(data['username'], data['showName'], data['venueName'], int(data['numberOfSeats']), int(data['totalPrice']), showtiming))
+        conn.commit()
+        conn.execute("UPDATE showDetails SET showCapacity = showCapacity - ? WHERE showName = ?", (data['numberOfSeats'], data['showName']))
+        conn.commit()
+        return jsonify({"message": "success"})
+    except Exception as e:
+        print("Error occurred:", str(e))
+        traceback.print_exc()  # This will print the traceback for detailed error information.
+        return jsonify({"message": "error", "error_details": str(e)})
+
+@app.route('/api/getUserBookingDetails', methods=['GET', 'POST'])
+def getUserBookingDetails():
+    data = request.get_json()
+    # print(data)
+
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM userBookingDetails WHERE username = ?", (data['username'],))
+        rows = cursor.fetchall()
+        print(rows)
+        return jsonify({"userBookingDetails": rows})
+    except:
+        return jsonify({"message": "error"})
+
+@app.route('/api/deleteUserBooking', methods=['GET', 'POST'])
+def deleteUserBooking():
+    data = request.get_json()
+    
+    print(data)
+    
+
+    try:
+        conn = connect_db()
+        conn.execute("DELETE FROM userBookingDetails WHERE username = ? AND showName = ? AND numberOfTickets = ?", (data['username'], data['showname'], data['numberOfTickets']))
+        conn.commit()
+        conn.execute("UPDATE showDetails SET showCapacity = showCapacity + ? WHERE showName = ?", (data['numberOfTickets'], data['showname']))
+        conn.commit()
+        return jsonify({"message": "success"})
+    except:
+        return jsonify({"message": "error"})
+
 # @app.route('/api/auth/protected', methods=['GET','POST'])
 # @jwt_required
 # def protected():

@@ -9,6 +9,7 @@ import createVenue from '../components/createVenue.vue'
 import createShow from '../components/createShow.vue'
 import editShow from '../components/editShow.vue'
 import bookTicket from '../components/bookTicket.vue'
+import seeTickets from '../components/seeTickets.vue'
 
 Vue.use(VueRouter)
 
@@ -61,7 +62,7 @@ const routes = [
     component: createVenue
   },
   {
-    path: '/createShow/:venuename',
+    path: '/createShow/:venuename/:venuecapacity',
     name: 'createShow',
     component: createShow
   },
@@ -74,6 +75,11 @@ const routes = [
     path: '/bookTicket/:username/:venuename/:showname',
     name: 'bookTicket',
     component: bookTicket
+  },
+  {
+    path: '/seeTickets/:username',
+    name: 'seeTickets',
+    component: seeTickets
   }
 ]
 

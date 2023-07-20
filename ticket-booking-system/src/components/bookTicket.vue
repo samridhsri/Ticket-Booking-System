@@ -11,7 +11,7 @@
         </div>
         <div>
             <div>
-                <h4>Available Seats : {{ venueDetails.venueCapacity }}</h4>
+                <h4>Available Seats : {{ showCapacity }}</h4>
             </div>
             <div class="d-flex justify-content-center">
 
@@ -29,7 +29,7 @@
                 <h4 class="m-1">{{ showDetails.showPrice * numberOfSeats }}</h4>
             </div>
             <div>
-                <button class="btn btn-primary">Book Ticket</button>
+                <button class="btn btn-primary" @click="bookTicket()">Book Ticket</button>
                 
             </div>
         </div>
@@ -45,7 +45,7 @@ export default {
         return {
             numberOfSeats: 1,
             totalPrice: 0,
-            venueCapacity: 0,
+            showCapacity: 0,
             venues: [],
             showList: [],
             showName: this.$route.params.showname,
@@ -58,7 +58,18 @@ export default {
     },
     methods: {
         bookTicket() {
-            console.log('book ticket');
+            axios.post('http://127.0.0.1:5000/api/bookticket', {
+                username: this.username,
+                showName: this.showName,
+                venueName: this.venueName,
+                numberOfSeats: this.numberOfSeats,
+                totalPrice: this.showDetails.showPrice * this.numberOfSeats,
+            }).then(response => {
+                console.log(response.data);
+                this.$router.push({ name: 'home' })
+            }).catch(error => {
+                console.log(error);
+            })
         },
         getVenueDetails(venueName) {
             console.log(venueName);
@@ -82,6 +93,7 @@ export default {
                         showName: this.showList[i][1],
                         showTime: this.showList[i][3],
                         showPrice: this.showList[i][5],
+                        showCapacity: this.showList[i][7],
                     }
                     return details;
                 }
@@ -99,6 +111,8 @@ export default {
                 this.showList = response.data.showList;
                 this.venueDetails = this.getVenueDetails(this.venueName);
                 this.showDetails = this.getShowDetails(this.showName);
+
+                this.showCapacity = this.showDetails.showCapacity;
             }
         ).catch(error => {
             console.log(error);

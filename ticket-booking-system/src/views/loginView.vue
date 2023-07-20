@@ -111,6 +111,7 @@ export default {
                     const token = response.data.access_token;
                     // const headers = { Authorization: `Bearer ${token}` };
                     localStorage.setItem('token', token);
+                    localStorage.setItem('email', this.email);
                     this.$router.push('/home/');
                 }
                 else{
