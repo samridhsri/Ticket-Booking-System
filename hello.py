@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
-from pdf_generate_script import generate_pdf_file_venue
+from pdf_generate_script import generate_pdf_file_venue, generate_pdf_file_show
 import traceback
 import uuid
 from datetime import datetime
@@ -182,7 +182,7 @@ def deleteShow():
     data = request.get_json()
     try:
         conn = connect_db()
-        conn.execute("DELETE FROM showDetails WHERE showName = ?", (data['showname'],))
+        conn.execute("DELETE FROM showDetails WHERE showName = ? AND time = ?", (data['showname'],data['time']))
         conn.commit()
         return jsonify({"message": "success"})
     except:
@@ -259,16 +259,59 @@ def exportVenuePDF():
     except:
         return jsonify({"message": "error"})
 
-@app.route('/api/downloadPDF/<pdf_file>', methods=['GET'])
-def downloadPDF(pdf_file):
+@app.route('/api/exportShowPDF', methods=['POST'])
+def exportShowPDF():
+    data = request.get_json()
+
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM showDetails")
+        rows = cursor.fetchall()
+        print(rows)
+
+        # Generate a unique filename for the PDF using UUID
+        pdf_file = str(uuid.uuid4()) + '.pdf'
+
+        generate_pdf_file_show(rows, pdf_file)
+
+        return jsonify({"pdf_file": pdf_file})
+    except:
+        return jsonify({"message": "error"})
+
+@app.route('/api/downloadVenuePDF/<pdf_file>', methods=['GET'])
+def downloadVenuePDF(pdf_file):
     try:
         return send_file(pdf_file, as_attachment='venue_details.pdf', download_name='venue_details.pdf')
     except Exception as e:
         traceback.print_exc()
         return jsonify({"message": str(e)})
 
+@app.route('/api/downloadShowPDF/<pdf_file>', methods=['GET'])
+def downloadShowPDF(pdf_file):
+    try:
+        return send_file(pdf_file, as_attachment='show_details.pdf', download_name='show_details.pdf')
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"message": str(e)})
+    
+@app.route('/api/show-search', methods=['GET', 'POST'])
+def showSearch():
+    data = request.get_json()
+    print(data)
+    print(data['showName'])
+
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM showDetails WHERE showName LIKE ?", ('%' + data['showName'] + '%',))
+        rows = cursor.fetchall()
+        print(rows)
+        return jsonify({"showDetails": rows})
+    except:
+        return jsonify({"message": "error"})
+
+
 @app.route('/api/deleteUserBooking', methods=['GET', 'POST'])
-@jwt_required
+
 def deleteUserBooking():
     data = request.get_json()
     

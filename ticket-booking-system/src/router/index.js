@@ -10,6 +10,8 @@ import createShow from '../components/createShow.vue'
 import editShow from '../components/editShow.vue'
 import bookTicket from '../components/bookTicket.vue'
 import seeTickets from '../components/seeTickets.vue'
+import searchShow from '../components/searchShow.vue'
+
 
 Vue.use(VueRouter)
 
@@ -80,6 +82,11 @@ const routes = [
     path: '/seeTickets/:username',
     name: 'seeTickets',
     component: seeTickets
+  },
+  {
+    path: '/searchShow/:showName',
+    name: 'searchShow',
+    component: searchShow
   }
 ]
 

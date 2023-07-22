@@ -15,8 +15,6 @@
         <button class="button btn-danger btn-lg btn mx-5" @click="register()">Register</button>
         <button class="button btn btn-lg btn-danger mx-5" @click="login()">Login</button>
         </div>
-        {{ email }}
-        {{ password }}
 
     </div>
     </div>

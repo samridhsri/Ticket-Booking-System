@@ -18,7 +18,6 @@
             </div>
 
             <button class="btn btn-primary mt-3" @click="createShow()">Save</button>
-            {{ showcapacity }}
 
 
         </div>
@@ -54,7 +53,7 @@ export default {
                 showcapacity: this.showcapacity
             }).then(response => {
                 console.log(response.data);
-                // this.$router.push({ name: 'adminDashboard' })    
+                this.$router.push({ name: 'adminDashboard' })    
             }).catch(error => {
                 console.log(error);
             })

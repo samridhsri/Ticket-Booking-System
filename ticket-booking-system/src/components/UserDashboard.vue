@@ -3,7 +3,7 @@
     <div class="container p-5 m-5 h-auto border border-5 rounded-5 " v-for="venue in venues">
         <h1 class="">{{ venue[1] }}</h1>
         <div class="row col-lg-12 px-5 mx-auto mb-4">
-        <div class="card" style="width: 18rem;" v-for="show in venueAndShows[venue[1]]">
+        <div class="card mx-auto" style="width: 18rem;" v-for="show in venueAndShows[venue[1]]">
             <div class="card-body">
                 <div class="">
                     <h5 class="card-title">{{ show[1] }}</h5>

@@ -7,6 +7,9 @@
 
       </div>
       <div>
+        <input type="text" class="form-control" placeholder="Search for a show" aria-label="Search for a show" @keyup.enter="searchShow(searchForShow)" v-model="searchForShow" aria-describedby="button-addon2">
+      </div>
+      <div>
         <Button class="btn btn-primary" @click="seeBookings()">See All your bookings</Button>
       </div>
       
@@ -40,12 +43,17 @@ export default {
   },
   data: function() {
     return{
-      username: localStorage.getItem('email').substring(0, localStorage.getItem('email').indexOf("@"))
+      username: localStorage.getItem('email').substring(0, localStorage.getItem('email').indexOf("@")),
+      searchForShow: ''
     }
   },
   methods:{
     seeBookings(){
       this.$router.push({name: 'seeTickets',params: { username: this.username}});
+    },
+    searchShow(showName){
+      console.log(showName);
+      this.$router.push({name: 'searchShow',params: { showName: showName}});
     }
   }
 }

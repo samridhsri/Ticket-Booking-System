@@ -18,7 +18,7 @@
 
                             <button type="button" class="btn btn-primary mt-3 mx-2" @click="editShow(show[1])">Edit</button>
                             <button type="button" class="btn btn-primary mt-3 mx-2"
-                                @click="deleteShow(show[1])">Delete</button>
+                                @click="deleteShow(show[1],show[3])">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -27,6 +27,8 @@
             <button class="btn btn-primary text-center my-auto mt-5 mx-4" v-if="!venueListIsEmpty()"
                 @click="createVenue()">+</button>
             <button class="btn btn-primary text-center my-auto mt-5" @click="exportVenuePDF()">Export Venue Details</button>
+            <button class="btn btn-primary text-center my-auto mx-3 mt-5" @click="exportShowDetails()">Export Show Details</button>
+            
         </div>
     </div>
 </template>
@@ -59,9 +61,10 @@ export default {
             this.$router.push({ name: 'editShow', params: { showname: showname } })
         },
 
-        deleteShow(showname) {
+        deleteShow(showname, showtime) {
             axios.post('http://127.0.0.1:5000/api/deleteShow', {
-                showname: showname
+                showname: showname,
+                time: showtime
             }).then(response => {
                 console.log(response.data);
                 this.$router.go()
@@ -96,11 +99,11 @@ export default {
         // Check if the browser supports the "FileSaver" API for saving files
         if (window.navigator.msSaveOrOpenBlob) {
             // For IE/Edge (use the "downloadPDF" endpoint to download the file)
-            window.location.href = `http://127.0.0.1:5000/api/downloadPDF/${pdf_file}`;
+            window.location.href = `http://127.0.0.1:5000/api/downloadVenuePDF/${pdf_file}`;
         } else {
             // For other browsers (use a link to download the file)
             const downloadLink = document.createElement('a');
-            downloadLink.href = `http://127.0.0.1:5000/api/downloadPDF/${pdf_file}`;
+            downloadLink.href = `http://127.0.0.1:5000/api/downloadVenuePDF/${pdf_file}`;
             downloadLink.target = '_blank';
             downloadLink.download = 'venue_details.pdf';
             downloadLink.click();
@@ -111,6 +114,29 @@ export default {
         console.error(error);
         alert('Failed to generate PDF. Please try again.');
     }
+},
+async exportShowDetails(){
+    const data = [(this.show)]
+
+    try {
+        const response = await axios.post('http://127.0.0.1:5000/api/exportShowPDF', data);
+        const pdf_file = response.data.pdf_file;
+
+        if(window.navigator.msSaveOrOpenBlob){
+            window.location.href = `http://127.0.0.1:5000/api/downloadShowPDF/${pdf_file}`;
+        }else{
+            const downloadLink = document.createElement('a');
+            downloadLink.href = `http://127.0.0.1:5000/api/downloadShowPDF/${pdf_file}`;
+            downloadLink.target = '_blank';
+            downloadLink.download = 'show_details.pdf';
+            downloadLink.click();
+        }
+        alert('PDF Generated');
+    } catch (error) {
+        console.error(error);
+        alert('Failed to generate PDF. Please try again.');
+    }
+
 }
 
 

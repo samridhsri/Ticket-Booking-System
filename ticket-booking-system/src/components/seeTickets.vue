@@ -8,9 +8,7 @@
     
   
         
-        <div>
-            {{ showDetails }}
-        </div>
+        
         <div v-for="show in showDetails">
             <div class="">
                 <div class="border border-top-5 m-2 p-3">
