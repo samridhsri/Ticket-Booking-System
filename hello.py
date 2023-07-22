@@ -5,8 +5,10 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
-
+from pdf_generate_script import generate_pdf_file_venue
 import traceback
+import uuid
+from datetime import datetime
 
 DEBUG = True
 app = Flask(__name__)
@@ -60,26 +62,33 @@ def adminlogin():
     except:
         return jsonify({"message": "error"})
 
-@app.route('/api/auth/login', methods=['GET','POST'])
+@app.route('/api/auth/login', methods=['GET', 'POST'])
 def login():
     data = request.get_json()
     print(data)
     print(data['email'])
     print(data['password'])
+
     try:
         conn = connect_db()
-        cursor = conn.execute("SELECT * FROM userDetails WHERE email = '{}' AND password = '{}'".format(data['email'], data['password']))
+        cursor = conn.execute(
+            "SELECT * FROM userDetails WHERE email = '{}' AND password = '{}'".format(data['email'], data['password']))
         rows = cursor.fetchall()
-        if(len(rows) == 1):
+        if len(rows) == 1:
             access_token = create_access_token(identity=data['email'])
-            return jsonify({"message": "success",
-                            "access_token": access_token,
-                            "email": data['email']})
+
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            conn.execute("UPDATE userDetails SET loginTime = '{}' WHERE email = '{}'".format(current_time, data['email']))
+            conn.commit()
+            return jsonify({
+                "message": "success",
+                "access_token": access_token,
+                "email": data['email']
+            })
         else:
             return jsonify({"message": "error"})
     except:
         return jsonify({"message": "error"})
-
 @app.route('/api/all-details', methods=['GET','POST'])
 def venueAndShowDetails():
     try:
@@ -232,6 +241,32 @@ def getUserBookingDetails():
     except:
         return jsonify({"message": "error"})
 
+@app.route('/api/exportVenuePDF', methods=['POST'])
+def exportVenuePDF():
+    data = request.get_json()
+
+    try:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM venueDetails")
+        rows = cursor.fetchall()
+
+        # Generate a unique filename for the PDF using UUID
+        pdf_file = str(uuid.uuid4()) + '.pdf'
+
+        generate_pdf_file_venue(rows, pdf_file)
+
+        return jsonify({"pdf_file": pdf_file})
+    except:
+        return jsonify({"message": "error"})
+
+@app.route('/api/downloadPDF/<pdf_file>', methods=['GET'])
+def downloadPDF(pdf_file):
+    try:
+        return send_file(pdf_file, as_attachment='venue_details.pdf', download_name='venue_details.pdf')
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"message": str(e)})
+
 @app.route('/api/deleteUserBooking', methods=['GET', 'POST'])
 @jwt_required
 def deleteUserBooking():
@@ -250,8 +285,3 @@ def deleteUserBooking():
     except:
         return jsonify({"message": "error"})
 
-@app.route('/api/export-pdf', methods=['GET', 'POST'])
-def export_pdf():
-    data = request.get_json()
-    print(data)
-    return {"message": "success"}

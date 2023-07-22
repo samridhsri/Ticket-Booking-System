@@ -84,17 +84,34 @@ export default {
                 }
             })
         },
-        exportVenuePDF() {
-            axios.post('http://127.0.0.1:5000/api/export-pdf', {
-                venues: this.venues,
-                shows: this.shows,
-                venueAndShows: this.venueAndShows
-            }).then(response => {
-                console.log(response.data);
-            }).catch(error => {
-                console.log(error);
-            });
-        },
+        async exportVenuePDF() {
+    const data = [
+        (this.venues, this.shows, this.venueAndShows)
+    ];
+
+    try {
+        const response = await axios.post('http://127.0.0.1:5000/api/exportVenuePDF', data);
+        const pdf_file = response.data.pdf_file;
+
+        // Check if the browser supports the "FileSaver" API for saving files
+        if (window.navigator.msSaveOrOpenBlob) {
+            // For IE/Edge (use the "downloadPDF" endpoint to download the file)
+            window.location.href = `http://127.0.0.1:5000/api/downloadPDF/${pdf_file}`;
+        } else {
+            // For other browsers (use a link to download the file)
+            const downloadLink = document.createElement('a');
+            downloadLink.href = `http://127.0.0.1:5000/api/downloadPDF/${pdf_file}`;
+            downloadLink.target = '_blank';
+            downloadLink.download = 'venue_details.pdf';
+            downloadLink.click();
+        }
+
+        alert('PDF Generated');
+    } catch (error) {
+        console.error(error);
+        alert('Failed to generate PDF. Please try again.');
+    }
+}
 
 
     },
