@@ -1,15 +1,14 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from flask_cors import CORS
 import sqlite3
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+
 import traceback
 
-
 DEBUG = True
-
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'abcdefgh'  # Change this to a secure secret key
 jwt = JWTManager(app)
@@ -23,7 +22,6 @@ def connect_db():
     except sqlite3.Error as e:
         print("Database connection error:", e)
         return None
-
 
 @app.route('/')
 def hello_world():
@@ -181,8 +179,6 @@ def deleteShow():
     except:
         return jsonify({"message": "error"})
 
-
-
 @app.route('/api/showDetails', methods=['GET','POST'])
 def showDetails():
     data = request.get_json()
@@ -237,6 +233,7 @@ def getUserBookingDetails():
         return jsonify({"message": "error"})
 
 @app.route('/api/deleteUserBooking', methods=['GET', 'POST'])
+@jwt_required
 def deleteUserBooking():
     data = request.get_json()
     
@@ -253,10 +250,8 @@ def deleteUserBooking():
     except:
         return jsonify({"message": "error"})
 
-# @app.route('/api/auth/protected', methods=['GET','POST'])
-# @jwt_required
-# def protected():
-#     current_user = get_jwt_identity()
-#     return jsonify({"message": "success",
-#                     "current_user": current_user})
-
+@app.route('/api/export-pdf', methods=['GET', 'POST'])
+def export_pdf():
+    data = request.get_json()
+    print(data)
+    return {"message": "success"}

@@ -6,8 +6,8 @@
             <h1>Hello Admin</h1>
             <div class="container border border-bottom-5 venue-container " v-for="venue in venues">
                 <div class="">
-                <h1 class="">{{ venue[1] }}</h1>
-            </div>
+                    <h1 class="">{{ venue[1] }}</h1>
+                </div>
                 <div class="row col-lg-12 px-5 mx-auto mb-4">
                     <div class="card" style="width: 18rem;" v-for="show in venueAndShows[venue[1]]">
                         <div class="card-body">
@@ -17,13 +17,16 @@
                             </div>
 
                             <button type="button" class="btn btn-primary mt-3 mx-2" @click="editShow(show[1])">Edit</button>
-                            <button type="button" class="btn btn-primary mt-3 mx-2" @click="deleteShow(show[1])">Delete</button>
+                            <button type="button" class="btn btn-primary mt-3 mx-2"
+                                @click="deleteShow(show[1])">Delete</button>
                         </div>
                     </div>
                 </div>
                 <button class="btn btn-primary" @click="createShow(venue[1], venue[4])">Add Shows</button>
             </div>
-            <button class="btn btn-primary text-center my-auto mt-5" v-if="!venueListIsEmpty()" @click="createVenue()">+</button>
+            <button class="btn btn-primary text-center my-auto mt-5 mx-4" v-if="!venueListIsEmpty()"
+                @click="createVenue()">+</button>
+            <button class="btn btn-primary text-center my-auto mt-5" @click="exportVenuePDF()">Export Venue Details</button>
         </div>
     </div>
 </template>
@@ -74,9 +77,26 @@ export default {
             return this.venues.length == 0;
         },
         createShow(venueName, venuecapacity) {
-            this.$router.push({ name: 'createShow', params: { venuename: venueName,
-            venuecapacity: venuecapacity } })
-        }
+            this.$router.push({
+                name: 'createShow', params: {
+                    venuename: venueName,
+                    venuecapacity: venuecapacity
+                }
+            })
+        },
+        exportVenuePDF() {
+            axios.post('http://127.0.0.1:5000/api/export-pdf', {
+                venues: this.venues,
+                shows: this.shows,
+                venueAndShows: this.venueAndShows
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        },
+
+
     },
     created() {
         //On page load check if there are venues in the database
@@ -86,7 +106,7 @@ export default {
                 this.venues = response.data.venueList;
                 this.shows = response.data.showList;
                 this.venueAndShows = response.data.venueAndShow;
-            
+
             })
             .catch(error => {
                 console.log(error);
